@@ -1,17 +1,80 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui/use-toast';
 
 const Register = () => {
-  const handleSubmit = (e: React.FormEvent) => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { register } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Registration logic would go here
+    
+    if (!termsAccepted) {
+      toast({
+        title: "Terms required",
+        description: "You must accept the terms and conditions to register",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Passwords do not match",
+        description: "Please ensure your passwords match",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      await register({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password
+      });
+      
+      toast({
+        title: "Registration successful",
+        description: "Welcome to Quiz Master!",
+      });
+      
+      navigate('/dashboard');
+    } catch (error) {
+      toast({
+        title: "Registration failed",
+        description: error instanceof Error ? error.message : "An error occurred during registration",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   return (
@@ -64,6 +127,8 @@ const Register = () => {
                       placeholder="John" 
                       required 
                       className="h-12"
+                      value={formData.firstName}
+                      onChange={handleChange}
                     />
                   </div>
                   <div className="space-y-2">
@@ -74,6 +139,8 @@ const Register = () => {
                       placeholder="Doe" 
                       required 
                       className="h-12"
+                      value={formData.lastName}
+                      onChange={handleChange}
                     />
                   </div>
                 </motion.div>
@@ -91,6 +158,8 @@ const Register = () => {
                     placeholder="john.doe@example.com" 
                     required 
                     className="h-12"
+                    value={formData.email}
+                    onChange={handleChange}
                   />
                 </motion.div>
                 
@@ -107,6 +176,8 @@ const Register = () => {
                     placeholder="Create a password" 
                     required 
                     className="h-12"
+                    value={formData.password}
+                    onChange={handleChange}
                   />
                 </motion.div>
                 
@@ -123,6 +194,8 @@ const Register = () => {
                     placeholder="Confirm your password" 
                     required 
                     className="h-12"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
                   />
                 </motion.div>
                 
@@ -132,7 +205,11 @@ const Register = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.8 }}
                 >
-                  <Checkbox id="terms" />
+                  <Checkbox 
+                    id="terms" 
+                    checked={termsAccepted}
+                    onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+                  />
                   <div className="grid gap-1.5 leading-none">
                     <Label
                       htmlFor="terms"
@@ -158,8 +235,9 @@ const Register = () => {
                   <Button 
                     type="submit" 
                     className="w-full h-12 button-hover"
+                    disabled={isSubmitting}
                   >
-                    Sign Up
+                    {isSubmitting ? "Creating Account..." : "Sign Up"}
                   </Button>
                 </motion.div>
               </form>

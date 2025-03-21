@@ -1,16 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '@/contexts/AuthContext';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
-  const { currentUser, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,34 +23,13 @@ const Header = () => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-
-  // Dynamic nav links based on authentication status
-  const getNavLinks = () => {
-    const commonLinks = [
-      { name: 'Home', path: '/' },
-    ];
-    
-    if (currentUser) {
-      return [
-        ...commonLinks,
-        { name: 'Dashboard', path: '/dashboard' },
-        // Only show Admin link if needed (you can add role-based check here later)
-        { name: 'Admin', path: '/admin' },
-      ];
-    } else {
-      return [
-        ...commonLinks,
-        { name: 'Login', path: '/login' },
-        { name: 'Register', path: '/register' },
-      ];
-    }
-  };
-  
-  const navLinks = getNavLinks();
+  const navLinks = [
+    { name: 'Home', path: '/' },
+    { name: 'Dashboard', path: '/dashboard' },
+    { name: 'Admin', path: '/admin' },
+    { name: 'Login', path: '/login' },
+    { name: 'Register', path: '/register' },
+  ];
 
   return (
     <header 
@@ -105,22 +81,6 @@ const Header = () => {
                 </Link>
               </motion.div>
             ))}
-            
-            {currentUser && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: navLinks.length * 0.1 }}
-              >
-                <Button 
-                  variant="ghost" 
-                  onClick={handleLogout}
-                  className="text-sm font-medium px-1 py-2 transition-colors text-muted-foreground hover:text-primary"
-                >
-                  Logout
-                </Button>
-              </motion.div>
-            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -185,22 +145,6 @@ const Header = () => {
                     </Link>
                   </motion.div>
                 ))}
-                
-                {currentUser && (
-                  <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.2, delay: navLinks.length * 0.05 }}
-                  >
-                    <Button
-                      variant="ghost"
-                      onClick={handleLogout}
-                      className="w-full justify-start px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-primary hover:bg-gray-50"
-                    >
-                      Logout
-                    </Button>
-                  </motion.div>
-                )}
               </nav>
             </div>
           </motion.div>

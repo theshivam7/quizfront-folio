@@ -1,42 +1,16 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/components/ui/use-toast';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const { toast } = useToast();
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    
-    try {
-      await login(email, password);
-      toast({
-        title: "Login successful",
-        description: "Welcome back to Quiz Master!",
-      });
-      navigate('/dashboard');
-    } catch (error) {
-      toast({
-        title: "Login failed",
-        description: error instanceof Error ? error.message : "Invalid email or password",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    // Login logic would go here
   };
 
   return (
@@ -88,8 +62,6 @@ const Login = () => {
                     placeholder="Enter your email" 
                     required 
                     className="h-12"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </motion.div>
                 
@@ -114,8 +86,6 @@ const Login = () => {
                     placeholder="Enter your password" 
                     required 
                     className="h-12"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </motion.div>
                 
@@ -127,9 +97,8 @@ const Login = () => {
                   <Button 
                     type="submit" 
                     className="w-full h-12 button-hover"
-                    disabled={isSubmitting}
                   >
-                    {isSubmitting ? "Signing in..." : "Sign In"}
+                    Sign In
                   </Button>
                 </motion.div>
               </form>

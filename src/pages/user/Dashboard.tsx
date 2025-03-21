@@ -41,6 +41,11 @@ const UserDashboard = () => {
     { name: 'Social Studies', quizzes: 12, enrolled: 60 },
   ];
 
+  // Function to get progress bar color based on score
+  const getProgressColor = (score: number) => {
+    return score >= 80 ? "bg-green-500" : score >= 60 ? "bg-yellow-500" : "bg-red-500";
+  };
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
@@ -158,11 +163,7 @@ const UserDashboard = () => {
                           <div className="flex items-center gap-2">
                             <Progress
                               value={result.score}
-                              className="h-2"
-                              indicatorClassName={
-                                result.score >= 80 ? "bg-green-500" :
-                                result.score >= 60 ? "bg-yellow-500" : "bg-red-500"
-                              }
+                              className={`h-2 ${getProgressColor(result.score)}`}
                             />
                             <span className="text-xs w-12">{result.score}%</span>
                           </div>

@@ -19,6 +19,12 @@ const Footer = () => {
             <Link to="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Home
             </Link>
+            <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              Dashboard
+            </Link>
+            <Link to="/admin" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              Admin
+            </Link>
             <Link to="/login" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Login
             </Link>
